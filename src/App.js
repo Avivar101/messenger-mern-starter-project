@@ -6,6 +6,11 @@ import FlipMove from 'react-flip-move'
 import SendIcon from '@material-ui/icons/Send'
 import IconButton from '@material-ui/core/IconButton'
 import axios from './axios';
+import Pusher from 'pusher-js';
+
+const pusher = new Pusher('93df24426ba9d39491dc', {
+  cluster: 'eu'
+});
 
 function App() {
   const [input, setInput] = useState('')
@@ -23,6 +28,13 @@ function App() {
   useEffect(() => {
     sync()
   }, [])
+
+  useEffect(() => {
+    const channel = pusher.subscribe('messages');
+    channel.bind('newMessage', function (data) {
+      sync();
+    })
+  }, [username])
 
   useEffect(() => {
     setUsername(prompt('Please enter your name'))
